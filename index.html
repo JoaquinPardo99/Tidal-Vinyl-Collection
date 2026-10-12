@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tidal Vinyl Collection</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=DM+Sans:wght@400;500&display=swap">
+<style>
+:root{--bg:#efe9df;--ink:#23201c;--mute:#7a7066;--wood:#b98d5c;--wood2:#8c6540;--panel:#fbf8f2;--line:#d8cfc0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1a18;--ink:#f0e9dd;--mute:#a09686;--wood:#7a5a3a;--wood2:#503a24;--panel:#262320;--line:#3a352f}}
+:root[data-theme="dark"]{--bg:#1c1a18;--ink:#f0e9dd;--mute:#a09686;--wood:#7a5a3a;--wood2:#503a24;--panel:#262320;--line:#3a352f}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 "DM Sans",system-ui,sans-serif}
+main{max-width:960px;margin:0 auto;padding:24px 16px 64px}
+h1{font:800 clamp(28px,6vw,44px)/1.05 Syne,system-ui,sans-serif;margin:0 0 4px;letter-spacing:-.02em}
+.sub{color:var(--mute);margin:0 0 20px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+select,button{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}
+button:focus-visible,select:focus-visible{outline:2px solid var(--wood);outline-offset:2px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.seg{display:flex}.seg button:first-child{border-radius:8px 0 0 8px}.seg button:last-child{border-radius:0 8px 8px 0;border-left:0}
+h2{font:600 18px Syne,sans-serif;margin:28px 0 8px}
+.shelf{display:flex;gap:3px;align-items:flex-end;padding:14px 12px 0;background:rgba(0,0,0,.1);border:10px solid var(--wood2);border-top:0;border-bottom:12px solid var(--wood);box-shadow:0 6px 0 var(--wood2);margin-bottom:24px;min-height:90px}
+.spine{width:22px;height:190px;border:0;border-radius:2px 2px 0 0;padding:8px 0;writing-mode:vertical-rl;font:600 12px "DM Sans",sans-serif;color:#fff;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:transform .15s}
+.spine:hover,.spine:focus-visible{transform:translateY(-12px)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px}
+.cov{border:0;background:none;padding:0;text-align:left;color:var(--ink)}
+.art{aspect-ratio:1;border-radius:3px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.cov b{display:block;margin-top:6px;font-weight:500;line-height:1.25}.cov span{color:var(--mute);font-size:13px}
+input{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 12px;min-width:min(260px,100%)}
+.crate{position:relative;display:flex;gap:6px;padding:30px 12px 0;background:rgba(0,0,0,.14);border:10px solid var(--wood2);border-top:0;border-bottom:0;margin-bottom:26px}
+.crate::after{content:"";position:absolute;left:-10px;right:-10px;bottom:0;height:calc(var(--s)*.32);background:linear-gradient(var(--wood),var(--wood2));border-radius:0 0 4px 4px;box-shadow:0 6px 0 rgba(0,0,0,.25);pointer-events:none}
+.rec{position:relative;flex:0 0 auto;width:var(--s);height:var(--s);padding:0;border:0;border-radius:2px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.25);transition:transform .18s}
+.rec img{width:100%;height:100%;object-fit:cover;display:block}
+.cap{position:absolute;left:0;right:0;top:0;padding:5px 6px 14px;background:linear-gradient(rgba(0,0,0,.8),transparent);color:#fff;font-size:11px;line-height:1.25;text-align:left;opacity:0;transition:opacity .15s;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.rec:hover,.rec:focus-visible{transform:translateY(-24px)}
+.rec:hover .cap,.rec:focus-visible .cap{opacity:1}
+#top{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:44px;height:44px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;background:var(--ink);color:var(--bg);border:0;box-shadow:0 2px 8px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:opacity .2s;z-index:4}
+#top.on{opacity:1;pointer-events:auto}
+.rot{position:absolute;inset:0;border-radius:50%;background:conic-gradient(rgba(255,255,255,.14),transparent 25%,rgba(255,255,255,.14) 50%,transparent 75%,rgba(255,255,255,.14)),radial-gradient(circle,var(--lab) 0 16%,#111 16.5% 18%,transparent 18%),repeating-radial-gradient(#151515 0 2px,#262626 3px 4px)}
+.card.spin .rot{animation:sp 1.6s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.arm{position:absolute;top:0;left:calc(var(--h)*1.2);width:6px;height:calc(var(--h)*.8);margin-left:-3px;background:linear-gradient(90deg,#888,#ddd,#888);border-radius:3px;transform-origin:50% 0;transform:rotate(-22deg);opacity:0;transition:transform .9s .7s ease-in-out,opacity .4s}
+.arm::after{content:"";position:absolute;bottom:-6px;left:-3px;width:12px;height:14px;background:#444;border-radius:2px}
+.card.open .arm{opacity:1}
+.card.spin .arm{transform:rotate(4deg)}
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:5}
+#ov.on{display:flex}
+.card{background:var(--panel);border-radius:12px;padding:24px;width:min(440px,100%);max-height:100%;overflow:auto}
+.stage{--h:min(220px,50vw);position:relative;height:var(--h);margin-bottom:18px}
+.stage .art,.disc{position:absolute;top:0;left:0;height:100%;aspect-ratio:1}
+.disc{border-radius:50%;transition:transform .6s cubic-bezier(.3,.7,.2,1)}
+.card.open .disc{transform:translateX(45%)}
+.card h3{font:800 24px/1.1 Syne,sans-serif;margin:0}
+.card p{margin:4px 0;color:var(--mute)}
+.card .go,.card .web{margin-top:14px;margin-right:8px}
+.note{margin-top:32px;color:var(--mute);font-size:13px}
+@media (prefers-reduced-motion:reduce){.disc,.rec,.cap,.arm{transition:none}.card.spin .rot{animation:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>Tidal Vinyl Collection</h1>
+<p class="sub" id="st">Mostrando datos de ejemplo. Toca un disco para sacarlo de su funda.</p>
+<div class="bar"><button id="login">Conectar con Tidal</button></div>
+<div class="bar">
+<select id="sort" aria-label="Ordenar por"><option value="artist">Banda, A–Z</option><option value="album">Álbum, A–Z</option><option value="year">Año</option></select>
+<div class="seg" role="group" aria-label="Vista"><button id="v1" aria-pressed="true" class="chip">Caja</button><button id="v2" aria-pressed="false" class="chip">Cuadrícula</button></div>
+</div>
+<div class="bar"><input id="q" type="search" placeholder="Buscar banda o álbum" aria-label="Buscar"></div>
+<div class="bar" id="jump"></div>
+<div id="out"></div>
+
+</main>
+<button id="top" aria-label="Volver arriba" title="Volver arriba"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+<div id="ov" role="dialog" aria-modal="true" aria-label="Detalle del álbum"><div class="card" id="card"></div></div>
+<script>
+var D=[
+["Kind of Blue","Miles Davis",1959,"Jazz","#1f3a5f","#0d1b2e"],["A Love Supreme","John Coltrane",1965,"Jazz","#b5651d","#5a2e0c"],
+["Time Out","Dave Brubeck Quartet",1959,"Jazz","#2e6f6a","#123c39"],["Rumours","Fleetwood Mac",1977,"Rock","#c9a24a","#6b4f12"],
+["Abbey Road","The Beatles",1969,"Rock","#4a6fa5","#1c2f52"],["Led Zeppelin IV","Led Zeppelin",1971,"Rock","#6b5b4a","#2f2720"],
+["Nevermind","Nirvana",1991,"Rock","#2a7fb8","#0e3d5e"],["Dummy","Portishead",1994,"Trip hop","#3d4a3a","#171e16"],
+["Maxinquaye","Tricky",1995,"Trip hop","#8a2d3b","#3b0f18"],["Homogenic","Björk",1997,"Electrónica","#d6602e","#7a2a0c"],
+["Selected Ambient Works 85-92","Aphex Twin",1992,"Electrónica","#6c7a89","#2b333b"],["Endless Summer","Fennesz",2001,"Electrónica","#7aa6c2","#35607c"],
+["Basic Channel","Basic Channel",1995,"Dub techno","#444","#111"],["Vocalcity","Maurizio",1999,"Dub techno","#2c5d4a","#0e2a20"],
+["Stand Up","Deepchord Presents Echospace",2007,"Dub techno","#51607a","#1e2638"],["Blue Lines","Massive Attack",1991,"Trip hop","#a43b2a","#4a130b"],
+["Tha Carter III","Lil Wayne",2008,"Hip hop","#c7a21f","#5e4a05"],["Illmatic","Nas",1994,"Hip hop","#7b4b2a","#33190a"],
+["Madvillainy","Madvillain",2004,"Hip hop","#b03a8c","#4c0f3b"],["Legend","Bob Marley & The Wailers",1984,"Reggae","#3f8f3a","#164a13"],
+["Super Ape","Lee Perry & The Upsetters",1976,"Reggae","#d1a82c","#5b3f06"],["Un Verano Sin Ti","Bad Bunny",2022,"Latino","#e0852e","#7a3b06"],
+["Mala Fama","Chavela Vargas",1971,"Latino","#9b2f44","#40101b"],["Songs in the Key of Life","Stevie Wonder",1976,"Soul","#5c3f8f","#24123f"]];
+var A=D.map(function(r,i){return{id:i,t:r[0],a:r[1],y:r[2],g:r[3],c:r[4],d:r[5]}});
+var gen="Todos",sort="artist",view=1,out=document.getElementById("out");
+function bg(a,i){if(i&&a.img)return"url("+a.img+") center/cover";return"linear-gradient(135deg,"+a.c+","+a.d+")"}
+function key(a){var m={artist:a.a.replace(/^The /,""),album:a.t,year:a.y,genre:a.g+" "+a.a};return m[sort]}
+function grp(a){if(sort=="artist")return a.a.replace(/^The /,"")[0].toUpperCase();if(sort=="album")return a.t[0].toUpperCase();if(sort=="year")return Math.floor(a.y/10)*10+"s";return a.g}
+function chips(){}
+var q="",qt;document.getElementById("q").oninput=function(e){q=e.target.value.trim().toLowerCase();clearTimeout(qt);qt=setTimeout(draw,150)};
+function draw(){var L=A.filter(function(a){return(gen=="Todos"||a.g==gen)&&(!q||(a.a+" "+a.t).toLowerCase().indexOf(q)>-1)}).sort(function(x,y){var p=key(x),r=key(y);return p<r?-1:p>r?1:0}),G={},O=[];
+L.forEach(function(a){var k=grp(a);if(!G[k]){G[k]=[];O.push(k)}G[k].push(a)});out.innerHTML="";
+var J=document.getElementById("jump");J.innerHTML="";
+if(!L.length){out.innerHTML='<p class="sub">No hay discos que coincidan.</p>';return}
+var W=out.clientWidth,S=W<520?92:120,per=Math.max(1,Math.floor((W-44+6)/(S+6)));
+O.forEach(function(k){var h=document.createElement("h2");h.textContent=k;out.appendChild(h);
+if(O.length>1){var jb=document.createElement("button");jb.textContent=k;jb.onclick=function(){h.scrollIntoView({block:"start"})};J.appendChild(jb)}
+var rows=[];if(view){for(var i=0;i<G[k].length;i+=per)rows.push(G[k].slice(i,i+per))}else rows.push(G[k]);
+rows.forEach(function(R){var w=document.createElement("div");w.className=view?"crate":"grid";if(view)w.style.setProperty("--s",S+"px");
+R.forEach(function(a){var b=document.createElement("button");
+if(view){b.className="rec";b.title=a.a+" – "+a.t;
+if(a.img){var im=document.createElement("img");im.src=a.img;im.alt="";im.loading="lazy";im.decoding="async";b.appendChild(im)}else{b.style.background=bg(a)}
+var cp=document.createElement("span");cp.className="cap";cp.textContent=a.t+" · "+a.a;b.appendChild(cp)}
+else{b.className="cov";b.innerHTML='<div class="art" style="background:'+bg(a,1)+'"></div><b></b><span></span>';b.children[1].textContent=a.t;b.children[2].textContent=a.a+" · "+a.y}
+b.setAttribute("aria-label",a.t+", "+a.a);b.onclick=function(){show(a)};w.appendChild(b)});out.appendChild(w)})})}
+var tb=document.getElementById("top");window.addEventListener("scroll",function(){tb.classList.toggle("on",window.scrollY>400)},{passive:true});
+tb.onclick=function(){window.scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth"})};
+var lastW=0,rt;window.addEventListener("resize",function(){clearTimeout(rt);rt=setTimeout(function(){if(out.clientWidth!=lastW){lastW=out.clientWidth;draw()}},200)});
+var ov=document.getElementById("ov"),card=document.getElementById("card");
+function show(a){card.className="card";card.innerHTML='<div class="stage"><div class="disc" style="--lab:'+a.c+'"><div class="rot"></div></div><div class="art" style="background:'+bg(a,1)+'"></div><div class="arm"></div></div><h3></h3><p></p><button class="go">Reproducir en la app de Tidal</button><button class="web">Abrir en web</button><button id="x">Cerrar</button>';
+card.querySelector("h3").textContent=a.t;card.querySelector("p").textContent=a.a+" · "+a.y+" · "+a.g;
+ov.classList.add("on");setTimeout(function(){card.classList.add("open")},60);document.getElementById("x").focus();
+document.getElementById("x").onclick=close;card.querySelector(".go").onclick=function(){if(!a.tid)return;card.classList.add("spin");setTimeout(function(){location.href="tidal://album/"+a.tid},2300)};card.querySelector(".web").onclick=function(){if(a.tid)window.open("https://tidal.com/album/"+a.tid,"_blank")}}
+function close(){ov.classList.remove("on")}
+ov.onclick=function(e){if(e.target==ov)close()};document.addEventListener("keydown",function(e){if(e.key=="Escape")close()});
+document.getElementById("sort").onchange=function(e){sort=e.target.value;draw()};
+function setV(n){view=n;document.getElementById("v1").setAttribute("aria-pressed",n==1);document.getElementById("v2").setAttribute("aria-pressed",n==0);draw()}
+document.getElementById("v1").onclick=function(){setV(1)};document.getElementById("v2").onclick=function(){setV(0)};
+
+var CID="9VTa6mqs0NWF45JP",RU=location.origin+"/",CC="US",API="https://openapi.tidal.com/v2";
+function st(t){document.getElementById("st").textContent=t}
+function b64(b){return btoa(String.fromCharCode.apply(null,new Uint8Array(b))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+async function login(){var v=b64(crypto.getRandomValues(new Uint8Array(32)));var c=b64(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)));sessionStorage.setItem("pv",v);
+location.href="https://login.tidal.com/authorize?"+new URLSearchParams({response_type:"code",client_id:CID,redirect_uri:RU,scope:"collection.read",code_challenge_method:"S256",code_challenge:c})}
+async function getToken(code){var r=await fetch("https://auth.tidal.com/v1/oauth2/token",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({grant_type:"authorization_code",client_id:CID,code:code,redirect_uri:RU,code_verifier:sessionStorage.getItem("pv")||""})});
+if(!r.ok)throw new Error("Login "+r.status+" "+(await r.text()).slice(0,120));return(await r.json()).access_token}
+function hue(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return h}
+async function gj(url,tk){for(var t=0;t<6;t++){var r=await fetch(url,{headers:{Authorization:"Bearer "+tk,Accept:"application/vnd.api+json"}});
+if(r.status==429){var w=Math.max((parseInt(r.headers.get("Retry-After"))||0)*1000,2000*Math.pow(2,t));st("Tidal pide esperar un momento ("+Math.round(w/1000)+" s)…");await new Promise(function(f){setTimeout(f,w)});continue}
+if(!r.ok)throw new Error("API "+r.status+" "+(await r.text()).slice(0,160));return r.json()}
+throw new Error("API 429: demasiadas solicitudes, intenta de nuevo en unos minutos")}
+function sleep(ms){return new Promise(function(f){setTimeout(f,ms)})}
+function mk(id,inc,i){var al=inc["albums:"+id];if(!al)return null;var at=al.attributes||{},rl=al.relationships||{},nm=[],img="";
+((rl.artists&&rl.artists.data)||[]).forEach(function(x){var a=inc["artists:"+x.id];if(a&&a.attributes)nm.push(a.attributes.name)});
+var cv=rl.coverArt&&rl.coverArt.data&&rl.coverArt.data[0],aw=cv&&inc["artworks:"+cv.id];
+if(aw&&aw.attributes&&aw.attributes.files){var f=aw.attributes.files.slice().sort(function(p,q){return Math.abs(p.meta.width-320)-Math.abs(q.meta.width-320)})[0];img=f?f.href:""}
+var h=hue(id);return{id:i,tid:id,t:at.title||"Sin título",a:nm.join(", ")||"Artista desconocido",y:parseInt((at.releaseDate||"").slice(0,4))||0,g:"Sin género",img:img,c:"hsl("+h+",45%,40%)",d:"hsl("+h+",50%,16%)"}}
+async function load(tk){st("Cargando tu colección…");var url=API+"/userCollectionAlbums/me/relationships/items?countryCode="+CC+"&include=items,items.artists,items.coverArt",inc={},out2=[],pg=0;
+while(url){var j=await gj(url,tk);
+(j.included||[]).forEach(function(x){inc[x.type+":"+x.id]=x});
+(j.data||[]).forEach(function(d){var o=mk(d.id,inc,out2.length);if(o)out2.push(o)});
+pg++;if(pg%5==1){A=out2.slice();gen="Todos";chips();draw()}st("Cargando tu colección… "+out2.length+" álbumes");
+var n=j.links&&j.links.next;url=n?(n.indexOf("http")==0?n:n.indexOf("/v2/")==0?"https://openapi.tidal.com"+n:API+n):null;if(url)await sleep(350)}
+if(!out2.length)throw new Error("Tidal no devolvió álbumes guardados");
+A=out2;gen="Todos";chips();draw();st("Tu colección: "+out2.length+" álbumes.");
+try{localStorage.setItem("vc1",JSON.stringify({t:Date.now(),a:out2}))}catch(e){}}
+function fail(e){if(/API 401/.test(e.message))sessionStorage.removeItem("tk");st("No pude cargar tu colección: "+e.message)}
+document.getElementById("login").onclick=function(){var t=sessionStorage.getItem("tk");if(t)load(t).catch(fail);else login()};
+(async function(){var c=null;try{c=JSON.parse(localStorage.getItem("vc1"))}catch(e){}
+if(c&&c.a&&c.a.length){A=c.a;st("Tu colección: "+A.length+" álbumes (guardada el "+new Date(c.t).toLocaleDateString()+"). Pulsa el botón para actualizar.");document.getElementById("login").textContent="Actualizar desde Tidal"}
+chips();draw();var code=new URLSearchParams(location.search).get("code"),fresh=c&&Date.now()-c.t<216e5;
+try{if(code){history.replaceState(null,"",location.pathname);var tk=await getToken(code);sessionStorage.setItem("tk",tk);if(!fresh)await load(tk)}
+else if(sessionStorage.getItem("tk")&&!fresh){await load(sessionStorage.getItem("tk"))}}
+catch(e){fail(e)}})();
+</script>
+</body>
+</html>
